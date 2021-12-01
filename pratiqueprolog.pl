@@ -204,6 +204,4 @@ pos([X|Xr], Y, Z) :-
 %% Prédicat Prolog qui renvoie l'index d'un élément passé en argument avec le tableau.
 index([], _, _) :- write('Le Tableau est vide').
 index([X|Xr], X, 0).
-%%index([X, Y], X, 0).
-%%index([X, Y], Y, 1).
 index([X|Xr], A, N) :- index(Xr, A, G), N is G+1.
