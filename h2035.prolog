@@ -75,15 +75,16 @@ wf_args([Arg|Args]) :- wf_args(Args), identifier(Arg).
 elaborate(_, E, _, _) :-
     var(E), !,
     debug_print(elaborate_nonclos(E)), fail.
-elaborate(_, N, T, N) :- number(N), !, T = int.
-elaborate(_, N, T, N) :- N = true, wf_type(T), T=bool,!; N=false, wf_type(T), T=bool,!.
-elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
-%elaborate(_, N,T, N) :- wf_type(T),!.  
-%L'opérateur ! (cut) est utile ici pour contrecarer les effets du backTracking si jamais l'expression que l'on a est déjà valide.
-% On ne va donc pas aller tester les conditions plus bas si c'est la cas. 
+elaborate(_, N, T, N) :- number(N), !, T = int. 
 elaborate(Env, lambda(X,E), T, lambda(DE)) :-
     !, elaborate([(X,T1)|Env], E, T2, DE), T = (T1 -> T2).
 %% ¡¡ REMPLIR ICI !!
+elaborate(_, N, T, N) :- N = true, wf_type(T), T=bool,!; N=false, wf_type(T), T=bool,!.
+elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
+elaborate([(X, T)|Xs], X, T, )
+%elaborate(_, N,T, N) :- wf_type(T),!.  
+%L'opérateur ! (cut) est utile ici pour contrecarer les effets du backTracking si jamais l'expression que l'on a est déjà valide.
+% On ne va donc pas aller tester les conditions plus bas si c'est la cas.
 elaborate(_, E, _, _) :-
     debug_print(elab_unknown(E)), fail.
 
