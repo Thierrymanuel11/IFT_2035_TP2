@@ -256,3 +256,10 @@ runeval(E, T, V) :- tenv0(TEnv), elaborate(TEnv, E, T, DE),
 %%             length(?(42,?(41,?(40,nil))))
 %%             + length(cons(true,nil))),
 %%         T, V).
+
+
+%%Prédicats auxiliaires dont on aura besoin
+%% Prédicat Prolog qui renvoie l'index d'un élément passé en argument avec le tableau.
+index([], _, _) :- write('Le Tableau est vide').
+index([X|Xr], X, 0).
+index([X|Xr], A, N) :- index(Xr, A, G), N is G+1.
