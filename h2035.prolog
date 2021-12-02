@@ -81,6 +81,7 @@ elaborate(Env, lambda(X,E), T, lambda(DE)) :-
 %% ¡¡ REMPLIR ICI !!
 elaborate(_, N, T, N) :- N = true, wf_type(T), T=bool,!; N=false, wf_type(T), T=bool,!.
 elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
+<<<<<<< Updated upstream
 %%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int))]
 elaborate(Env, E, T, app(var(I), Eretour)):- 
     E =.. [Head,Eretour],
@@ -99,6 +100,21 @@ elaborate(Env, E, T, app(E2, Eautre)):-
 %%elaborate(Env,  Exp, T,I) :-
 %%    Exp =.. [Head|Tail],
 %%    T =[Head|Tail].
+=======
+
+elaborate(Env, Exp, T, R) :-  
+    Exp =.. [Exp_Head|Exp_Tail],
+    index(Env, Exp_Head, I), %Ajouter a index un prédicat permettant de retourner le deuxieme element du tuple
+    %Pourquoi dans index? car index a directement accès au tuples dans la liste d'environnement
+    index(Env, (Exp_Head, T), I),
+    R = app(var(I),elaborate(Env, Exp_Tail, T, R)).
+
+
+
+    %%index(Env, (Head, T), I).
+
+
+>>>>>>> Stashed changes
 %elaborate(_, N,T, N) :- wf_type(T),!.  
 %L'opérateur ! (cut) est utile ici pour contrecarer les effets du backTracking si jamais l'expression que l'on a est déjà valide.
 % On ne va donc pas aller tester les conditions plus bas si c'est la cas.
