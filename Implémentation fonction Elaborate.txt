@@ -1,6 +1,9 @@
 +(5)
 	app(var(0), 5)
 	int -> int
+1 + 2
+    app(app(var(0), 1), 2)
+    int -> int -> int
 cons(1,nil)
 	app(app(var(4), 1), var(3))
 	list(int)

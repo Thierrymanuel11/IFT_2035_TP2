@@ -78,23 +78,30 @@ elaborate(_, E, _, _) :-
 elaborate(_, N, T, N) :- number(N), !, T = int. 
 elaborate(Env, lambda(X,E), T, lambda(DE)) :-
     !, elaborate([(X,T1)|Env], E, T2, DE), T = (T1 -> T2).
-elaborate2(Env,  Exp, T,I) :-
-    Exp =.. [Head|Tail],
-    T =[Head|Tail].
-    
-
 %% ¡¡ REMPLIR ICI !!
 elaborate(_, N, T, N) :- N = true, wf_type(T), T=bool,!; N=false, wf_type(T), T=bool,!.
 elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
+%%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int))]
+elaborate(Env, E, T, app(var(I), Eretour)):- 
+    E =.. [Head,Eretour],
+    T = (int->int),
+    index(Env, ((Head), _), I),!.
+elaborate(Env, E, T, app(E2, Eautre)):-
+    E =.. [Head|Tail],
+    last(Tail, Eautre),
+    index(Tail, X, 0),
+    elaborate(Env, X, T, E2),!.
 
-    %%index(Env, (Head, T), I).
 
-
+ %%Poser la question par rapport à l'opérateur 'cut'(!) et par rapport à '=..'
+%%elaborate(Env,  Exp, T,I) :-
+%%    Exp =.. [Head|Tail],
+%%    T =[Head|Tail].
 %elaborate(_, N,T, N) :- wf_type(T),!.  
 %L'opérateur ! (cut) est utile ici pour contrecarer les effets du backTracking si jamais l'expression que l'on a est déjà valide.
 % On ne va donc pas aller tester les conditions plus bas si c'est la cas.
 elaborate(_, E, _, _) :-
-    debug_print(elab_unknown(E)), fail.
+    debug_print(elab_unknown(E)), fail.%%Poser la question par rapport à cette ligne.
 
 %% Ci-dessous, quelques prédicats qui vous seront utiles:
 %% - instantiate: correspond à la règle "σ ⊂ τ" de la donnée.
@@ -272,10 +279,9 @@ runeval(E, T, V) :- tenv0(TEnv), elaborate(TEnv, E, T, DE),
 index([], _, _) :- write('Le Tableau est vide').
 index([X|Xr], X, 0).
 index([X|Xr], A, N) :- index(Xr, A, G), N is G+1.
+%%index([(X, Y)], (X, Y), 0).
+%%index([(X, Y)|Resttab], A, N):- index(Resttab, A, G), N is G+1.
 
 %%Prédicat Prolog qui retourne le premier élément d'une liste.
 head([], _).
 head([X|Xr], X).
-
-
-    
