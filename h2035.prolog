@@ -84,13 +84,15 @@ elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
 %%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int))]
 elaborate(Env, E, T, app(var(I), Eretour)):- 
     E =.. [Head,Eretour],
-    T = (int->int),
-    index(Env, ((Head), _), I),!.
+    index(Env, ((Head), T), I),!.
 elaborate(Env, E, T, app(E2, Eautre)):-
     E =.. [Head|Tail],
+    length(Tail, N),
+    N>1,
     last(Tail, Eautre),
     index(Tail, X, 0),
-    elaborate(Env, X, T, E2),!.
+    index(Env, ((Head), T), _),
+    elaborate(Env, X, _, E2),!.
 
 
  %%Poser la question par rapport à l'opérateur 'cut'(!) et par rapport à '=..'
