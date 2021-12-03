@@ -85,11 +85,14 @@ elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
 elaborate(Env, E, T, app(var(I), Eretour)):- 
     E =.. [Head,Eretour],
     index(Env, ((Head), T), I),!.
-
 elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
-    E =.. [Head, Middle, Eautre],
+    E =.. [Head, Middle, Tail],
     index(Env, (Head, T), I),
-    elaborate(Env,Middle , _, E2),!.
+    elaborate(Env,Middle , _, E2),
+    elaborate(Env, Tail, _, Eautre),!.
+%%elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
+%%    E =.. [Head, Middle, Tail],
+
 %%elaborate(Env, A:T, T, var(I)):-
 %%    index(Env, (A, T),_ ).
 
