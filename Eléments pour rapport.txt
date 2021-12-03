@@ -1,0 +1,14 @@
+Difficultés rencontrés:
+*Prédicat elaborate:
+    - Elaboration des expressions booléenes
+    - Elaboration des listes d'expressions
+    - Elaboration des expressions arithmétiques: Nous nous sommes basés sur les exemples de code à élaborer donnés sur le forum Studium, nous avos chercher à decomposer ce code en une 
+    liste de plusieurs éléments, avec le premier élément qui sera l'opérateur qu'on va chercher dans l'environement, puis l'on a élaborer le reste.
+    Pour décomposer la fonction, on a penser à implémenter la décomposition via un prédicat, car l'on ne comprenait pas le fonctionemment de 
+    l'opérateur prolog '=..'. On a eu aussi du mal avec l'annotation infixe ou préfixe des expréssions qui allaient etre données. Puis avec disscussion
+    avec le proffesseur, on a pu  comprendre et on a utiliser l'opérateur '=..' pour segmenter notre expression, et il s'est révélé etre très puissant
+    qui nous a beaucoup aidé. On a rejeter l'option du prédicat pour la décomposition car il représentait un traivail supplémentaire long et inutile.  
+    -
+
+*Solutions apportées:
+    -
