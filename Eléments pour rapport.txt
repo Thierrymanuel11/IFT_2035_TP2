@@ -8,7 +8,11 @@ Difficultés rencontrés:
     l'opérateur prolog '=..'. On a eu aussi du mal avec l'annotation infixe ou préfixe des expréssions qui allaient etre données. Puis avec disscussion
     avec le proffesseur, on a pu  comprendre et on a utiliser l'opérateur '=..' pour segmenter notre expression, et il s'est révélé etre très puissant
     qui nous a beaucoup aidé. On a rejeter l'option du prédicat pour la décomposition car il représentait un traivail supplémentaire long et inutile.  
-    -
+    -Elaboration pour les constructeurs de listes: Nous avons remarquer la grande ressemblence entre l'élaboration des expression arithmétiques et celles
+    des listes qui fonctionnent de la meme manière à la différence que le dernier élément de la liste est toujours un nil (liste vide). Donc, 
+    on a crée un cas de base qui élabore cette liste vide. En ce qui concern le premier élément du cons, on a utilisé l'implémentation triviale
+    des chiffres qui retourne un int. En ce qui concerne l'élément du milieu de la liste générée par '=..', celui-ci est élaboré réccursivement 
+    de la meme façon que pour les opérations arithmétiques. 
 
 *Solutions apportées:
     -
