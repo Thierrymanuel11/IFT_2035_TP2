@@ -85,21 +85,16 @@ elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
 elaborate(Env, E, T, app(var(I), Eretour)):- 
     E =.. [Head,Eretour],
     index(Env, ((Head), T), I),!.
-elaborate(Env, E, T, app(app(var(I), A),B)):-
-    E =.. [Head, A, B],
-    index(Env, ((Head), T), I),!.
 
-elaborate(Env, E, T, app(E2, Eautre)):-
-    E =.. [Head|Tail],
-    length(Tail, N),
-    N>1,
-    last(Tail, Eautre),
-    index(Tail, X, 0),
-    index(Env, ((Head), T), _),
-    elaborate(Env, X, _, E2),!.
+elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
+    E =.. [Head, Middle, Eautre],
+    index(Env, (Head, T), I),
+    elaborate(Env,Middle , _, E2),!.
+%%elaborate(Env, A:T, T, var(I)):-
+%%    index(Env, (A, T),_ ).
 
 
- %%Poser la question par rapport à l'opérateur 'cut'(!) et par rapport à '=..'
+%%Poser la question par rapport à l'opérateur 'cut'(!) et par rapport à '=..'
 %%elaborate(Env,  Exp, T,I) :-
 %%    Exp =.. [Head|Tail],
 %%    T =[Head|Tail].
