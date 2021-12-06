@@ -13,6 +13,14 @@ Difficultés rencontrés:
     on a crée un cas de base qui élabore cette liste vide. En ce qui concern le premier élément du cons, on a utilisé l'implémentation triviale
     des chiffres qui retourne un int. En ce qui concerne l'élément du milieu de la liste générée par '=..', celui-ci est élaboré réccursivement 
     de la meme façon que pour les opérations arithmétiques. 
+    - Elaboration pour l'inférence de type: au début nous avons décomposé l'expréssion en 3 éléments, Head, Middle et Tail pour ensuite
+    élaborer le Middle. Nous avons remarqué qu'à la compilation, cela a généré un warnirng d'instanciation d'un "Singleton" en d'autres termes,
+    on disait que le Head n'était pas utilisé. Nous avons donc retirer la variable Head et l'avons remplacé par une "_" pour que le compilateur ne 
+    prenne pas en compte le premier élément (":"). Lorsque nous avaons voulu tester ce code avec l'exemple "nil : list(bool)", nous avons fait face
+    à une erreur d'instanciation. Lors de l'exécution avec la trace, nous avons remarqué que le compilateur reconnaissait l'expression comme
+    une expression arithmétique car leurs décompositions avec l'opérateur =.. renvoit un tableau avec le meme nombre d'éléments.
+    Pour corriger cela, nous avons implémenter un cas spécial de décomposition. Au lieu de mettre "[Head, Middle, Tail]", on a mis "[: Middle, Tail]"
+    et nous avons positionné ce fragment de code avant l'émaboration des expressions arithmétiques.
 
 *Solutions apportées:
     -
