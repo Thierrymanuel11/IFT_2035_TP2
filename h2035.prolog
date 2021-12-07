@@ -79,8 +79,8 @@ elaborate(_, N, T, N) :- number(N), !, T = int.
 elaborate(Env, lambda(X,E), T, lambda(DE)) :-
     !, elaborate([(X,T1)|Env], E, T2, DE), T = (T1 -> T2).
 %% ¡¡ REMPLIR ICI !!
-elaborate(_, N, T, N) :- N = true, wf_type(T), T=bool,!; N=false, wf_type(T), T=bool,!.
-elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
+%%Elaboration des expréssions booléenes
+elaborate(Env, N, T, var(I)) :- N = true, index(Env, (N, T, _),I),!; N=false,index(Env, (N, T, _),I),!.
 %%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int)), (cons, list(t)), ((nil), (empty))]
 elaborate(Env, E, T, Eretour):-
     E =.. [?, Tail],
@@ -88,15 +88,6 @@ elaborate(Env, E, T, Eretour):-
 elaborate(Env, E, Tail, E2):-
     E =.. [:, Middle, Tail],
     elaborate(Env, Middle, _, E2),!.
-%%elaborate implémenté pour soutenir toutes les opérations arithmétiques (+, *, /, -)
-elaborate(Env, E, T, app(var(I), Eretour)):- 
-    E =.. [Head,Eretour],
-    index(Env, ((Head), T, _), I),!.
-elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
-    E =.. [Head, Middle, Tail],
-    index(Env, (Head,T, _), I),
-    elaborate(Env,Middle , _, E2),
-    elaborate(Env, Tail, _, Eautre),!. 
 %%elaborate pour le cas d ebase de l'operateur de constructeur de liste.
 elaborate(Env, nil, T, var(I)):-
     index(Env, (nil, T, _), I),!.
@@ -106,19 +97,15 @@ elaborate(Env, E, T, app(app(var(I), E1), Eautre)):-
     index(Env, (Head, T, _), I),
     elaborate(Env, Tail, _, Eautre),
     elaborate(Env, Middle, _, E1),!.
-
-%%elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
-%%    E =.. [Head, Middle, Tail],
-
-%%elaborate(Env, A:T, T, var(I)):-
-%%    index(Env, (A, T),_ ).
-
-
-%%Poser la question par rapport à l'opérateur 'cut'(!) et par rapport à '=..'
-%%elaborate(Env,  Exp, T,I) :-
-%%    Exp =.. [Head|Tail],
-%%    T =[Head|Tail].
-%elaborate(_, N,T, N) :- wf_type(T),!.  
+%%elaborate implémenté pour soutenir toutes les opérations arithmétiques (+, *, /, -)
+elaborate(Env, E, T, app(var(I), Eretour)):- 
+    E =.. [Head,Eretour],
+    index(Env, ((Head), (A -> T), _), I),!.
+elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
+    E =.. [Head, Middle, Tail],
+    index(Env, (Head,(A -> B -> T), _), I),
+    elaborate(Env,Middle , _, E2),
+    elaborate(Env, Tail, _, Eautre),!. 
 %L'opérateur ! (cut) est utile ici pour contrecarer les effets du backTracking si jamais l'expression que l'on a est déjà valide.
 % On ne va donc pas aller tester les conditions plus bas si c'est la cas.
 elaborate(_, E, _, _) :-
