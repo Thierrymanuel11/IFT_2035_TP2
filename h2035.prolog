@@ -82,24 +82,24 @@ elaborate(Env, lambda(X,E), T, lambda(DE)) :-
 elaborate(_, N, T, N) :- N = true, wf_type(T), T=bool,!; N=false, wf_type(T), T=bool,!.
 elaborate(_, [X|Xr], list(int), [X|Xr]) :- number(X), wf_type(list(int)),!.
 %%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int)), (cons, list(t)), ((nil), (empty))]
-elaborate(Env, E, T, app(var(I), Eretour)):- 
-    E =.. [Head,Eretour],
-    index(Env, ((Head), T, _), I),!.
+elaborate(Env, E, T, Eretour):-
+    E =.. [?, Tail],
+    elaborate(Env, Tail, T, Eretour),!.
 elaborate(Env, E, Tail, E2):-
     E =.. [:, Middle, Tail],
     elaborate(Env, Middle, _, E2),!.
+%%elaborate implémenté pour soutenir toutes les opérations arithmétiques (+, *, /, -)
+elaborate(Env, E, T, app(var(I), Eretour)):- 
+    E =.. [Head,Eretour],
+    index(Env, ((Head), T, _), I),!.
 elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
     E =.. [Head, Middle, Tail],
     index(Env, (Head,T, _), I),
     elaborate(Env,Middle , _, E2),
-    elaborate(Env, Tail, _, Eautre),!. %%elaborate implémenté pour soutenir toutes les opérations arithmétiques (+, *, /, -)
+    elaborate(Env, Tail, _, Eautre),!. 
 %%elaborate pour le cas d ebase de l'operateur de constructeur de liste.
 elaborate(Env, nil, T, var(I)):-
     index(Env, (nil, T, _), I),!.
-%%elaborate(Env, E, T, app(app(var(I), Middle), var(I2))):-
-%%    E=.. [Head, Middle, Tail],
-%%    index(Env, (Head, T, _), I),
-%%    index(Env, (Tail, _, _), I2)
 elaborate(Env, E, T, app(app(var(I), E1), Eautre)):-
     E=.. [Head, Middle, Tail],
     Head = cons,
