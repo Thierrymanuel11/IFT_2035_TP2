@@ -86,8 +86,15 @@ elaborate(Env, lambda(X,E), T, lambda(DE)) :-
 elaborate(Env, N, T, var(I)) :- N = true, index(Env, (N, T, _),I),!; N=false,index(Env, (N, T, _),I),!.
 %%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int)), (cons, list(t)), ((nil), (empty))]
 elaborate(Env, E, T, Eretour):-
-    E =.. [?, Tail],
-    elaborate(Env, Tail, T, Eretour),!.
+    E =.. [?, Middle, nil],
+    elaborate(Env, cons(Middle, nil), T, Eretour),!.
+elaborate(Env, E, T, N):-
+    E=..[?, Middle, ?(Tail)],
+    A = cons(Tail),
+    elaborate(Env, Middle, _, Elab_Middle),
+    elaborate(Env, A, _, Elab_Tail),
+    elaborate(Env, cons(Elab_Middle, cons(Elab_Tail, nil)), T1, N),!.
+
 elaborate(Env, E, Tail, E2):-
     E =.. [:, Middle, Tail],
     elaborate(Env, Middle, _, E2),!.
