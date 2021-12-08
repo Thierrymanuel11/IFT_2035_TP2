@@ -75,10 +75,13 @@ wf_args([Arg|Args]) :- wf_args(Args), identifier(Arg).
 elaborate(_, E, _, _) :-
     var(E), !,
     debug_print(elaborate_nonclos(E)), fail.
-elaborate(_, N, T, N) :- number(N), !, T = int. 
+elaborate(_, N, T, N) :- number(N), !, T = int.
+%% ¡¡ REMPLIR ICI !!
+elaborate(Env, X, _, var(I)) :-
+    identifier(X),
+    index(Env, (X, _, _), I),!. 
 elaborate(Env, lambda(X,E), T, lambda(DE)) :-
     !, elaborate([(X,T1)|Env], E, T2, DE), T = (T1 -> T2).
-%% ¡¡ REMPLIR ICI !!
 %%Elaboration des expréssions booléenes
 elaborate(Env, N, T, var(I)) :- N = true, index(Env, (N, T, _),I),!; N=false,index(Env, (N, T, _),I),!.
 %%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int)), (cons, list(t)), ((nil), (empty))]
