@@ -203,7 +203,7 @@ eval(_, N, N) :- number(N), !.
 eval(Env, var(Idx), V) :- !, nth_elem(Idx, Env, V).
 eval(Env, lambda(E), closure(Env, E)) :- !.
 eval(Env, app(var(Indx), A), V):-!,
-    index(Env,(_, _, builtin(S)), Indx),
+    index(Env,(builtin(S)), Indx),
     builtin(S, A, V).
 eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
