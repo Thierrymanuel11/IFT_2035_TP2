@@ -205,6 +205,10 @@ eval(Env, lambda(E), closure(Env, E)) :- !.
 eval(Env, app(var(Indx), A), V):-!,
     index(Env,(builtin(S)), Indx),
     builtin(S, A, V).
+eval(Env, app(app(var(Idx), A), var(Indx2)), V):-!,
+    index(Env, (builtin(C)), Idx),
+    builtin(C, A, builtin(X)),
+    builtin(X, [], V).
 eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
     eval(Env, E2, V2),
