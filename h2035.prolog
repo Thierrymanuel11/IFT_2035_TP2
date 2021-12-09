@@ -98,7 +98,7 @@ elaborate(Env, E, T, N):-
 elaborate(Env, E, Tail, E2):-
     E =.. [:, Middle, Tail],
     elaborate(Env, Middle, _, E2),!.
-%%elaborate pour le cas d ebase de l'operateur de constructeur de liste.
+%%elaborate pour le cas de base de l'operateur de constructeur de liste.
 elaborate(Env, nil, T, var(I)):-
     index(Env, (nil, T, _), I),!.
 elaborate(Env, E, T, app(app(var(I), E1), Eautre)):-
