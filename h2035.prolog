@@ -156,15 +156,20 @@ mapsubst([T1|T1s], X, T2, [T3|T3s]) :-
 %% dans la liste Vs.
 freelvars(E, Vs) :- freelvars([], E, Vs).
 
+memberFV(X,[Y|_]) :- X == Y, !.
+memberFV(X,[_|XS]) :- memberFV(X,XS).
+
 %% freelvars(+Vsi, +E, -Vso)
 %% Règle auxiliaire de freelvars/2.
 freelvars(Vsi, V, Vso) :-
     var(V), !,
-    (member(V, Vsi) -> Vso = Vsi; Vso = [V|Vsi]).
+    (memberFV(V, Vsi) -> Vso = Vsi; Vso = [V|Vsi]).
+freelvars(Vsi, [T|Ts], Vso) :-
+    !, freelvars(Vsi, T, Vs1),
+    freelvars(Vs1, Ts, Vso).
 freelvars(Vsi, E, Vso) :-
-    (E = [T|Ts], !; E =.. [_,T|Ts]) ->
-        freelvars(Vsi, T, Vs1),
-        freelvars(Vs1, Ts, Vso);
+    (E =.. [_,T|Ts]) ->
+        freelvars(Vsi, [T|Ts], Vso);
     Vso = Vsi.
 
 %% generalize(+FVenv, +Env, -GEnv)
@@ -184,8 +189,9 @@ generalize(FVenv, [(X,T)|DeclEnv], [(X,GT)|GenEnv]) :-
 gentype(_, [], T, T).
 gentype(FVenv, [V|Vs], T, GT) :-
     gentype(FVenv, Vs, T, GT1),
-    (member(V, FVenv) -> GT = GT1;
+    (memberFV(V, FVenv) -> GT = GT1;
      genatom(t, V), GT = forall(V, T)).
+
 
 
 %%%%%% EVALUATION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
