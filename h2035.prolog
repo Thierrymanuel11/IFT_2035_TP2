@@ -79,7 +79,7 @@ elaborate(_, N, T, N) :- number(N), !, T = int.
 %% ¡¡ REMPLIR ICI !!
 elaborate(Env, X, _, var(I)) :-
     identifier(X),
-    index(Env, (X, _, _), I),!. 
+    index(Env, (X, _), I),!. 
 elaborate(Env, lambda(X,E), T, lambda(DE)) :-
     !, elaborate([(X,T1)|Env], E, T2, DE), T = (T1 -> T2).
 %%Elaboration des expréssions booléenes
@@ -100,11 +100,11 @@ elaborate(Env, E, Tail, E2):-
     elaborate(Env, Middle, _, E2),!.
 %%elaborate pour le cas de base de l'operateur de constructeur de liste.
 elaborate(Env, nil, T, var(I)):-
-    index(Env, (nil, T, _), I),!.
+    index(Env, (nil, T), I),!.
 elaborate(Env, E, T, app(app(var(I), E1), Eautre)):-
     E=.. [Head, Middle, Tail],
     Head = cons,
-    index(Env, (Head, T, _), I),
+    index(Env, (Head, T), I),
     elaborate(Env, Tail, _, Eautre),
     elaborate(Env, Middle, _, E1),!.
 %%elaborate implémenté pour soutenir toutes les opérations arithmétiques (+, *, /, -)
@@ -113,7 +113,7 @@ elaborate(Env, E, T, app(var(I), Eretour)):-
     index(Env, ((Head), (A -> T), _), I),!.
 elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
     E =.. [Head, Middle, Tail],
-    index(Env, (Head,(A -> B -> T), _), I),
+    index(Env, (Head,(A -> B -> T)), I),
     elaborate(Env,Middle , _, E2),
     elaborate(Env, Tail, _, Eautre),!. 
 %L'opérateur ! (cut) est utile ici pour contrecarer les effets du backTracking si jamais l'expression que l'on a est déjà valide.
@@ -202,6 +202,9 @@ eval(_, E, _) :-
 eval(_, N, N) :- number(N), !.
 eval(Env, var(Idx), V) :- !, nth_elem(Idx, Env, V).
 eval(Env, lambda(E), closure(Env, E)) :- !.
+eval(Env, app(var(Indx), A), V):-!,
+    index(Env,(_, _, builtin(S)), Indx),
+    builtin(S, A, V).
 eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
     eval(Env, E2, V2),
