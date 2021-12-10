@@ -77,6 +77,7 @@ elaborate(_, E, _, _) :-
     debug_print(elaborate_nonclos(E)), fail.
 elaborate(_, N, T, N) :- number(N), !, T = int.
 %% ¡¡ REMPLIR ICI !!
+%generalize([], [(test, (int -> list(int) -> list(int)))], T).
 elaborate(Env, X, _, var(I)) :-
     identifier(X),
     index(Env, (X, _), I),!. 
@@ -85,6 +86,7 @@ elaborate(Env, lambda(X,E), T, lambda(DE)) :-
 %%Elaboration des expréssions booléenes
 elaborate(Env, N, T, var(I)) :- N = true, index(Env, (N, T, _),I),!; N=false,index(Env, (N, T, _),I),!.
 %%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int)), (cons, list(t)), ((nil), (empty))]
+%Elaboration de l'inverse de l'inference de type
 elaborate(Env, E, T, Eretour):-
     E =.. [?, Middle, nil],
     elaborate(Env, cons(Middle, nil), T, Eretour),!.
@@ -94,23 +96,25 @@ elaborate(Env, E, T, N):-
     elaborate(Env, Middle, _, Elab_Middle),
     elaborate(Env, A, _, Elab_Tail),
     elaborate(Env, cons(Elab_Middle, cons(Elab_Tail, nil)), T1, N),!.
-
+%Elaboration de l'inférence de types
 elaborate(Env, E, Tail, E2):-
     E =.. [:, Middle, Tail],
     elaborate(Env, Middle, _, E2),!.
 %%elaborate pour le cas de base de l'operateur de constructeur de liste.
 elaborate(Env, nil, T, var(I)):-
     index(Env, (nil, T), I),!.
+%Elaboration de la récursion de l'opérateur de constructeur de liste.
 elaborate(Env, E, T, app(app(var(I), E1), Eautre)):-
     E=.. [Head, Middle, Tail],
     Head = cons,
     index(Env, (Head, T), I),
     elaborate(Env, Tail, _, Eautre),
     elaborate(Env, Middle, _, E1),!.
-%%elaborate implémenté pour soutenir toutes les opérations arithmétiques (+, *, /, -)
+%elaborate pour le cas de base des opérations arithmétiques (+, *, /, -)
 elaborate(Env, E, T, app(var(I), Eretour)):- 
     E =.. [Head,Eretour],
     index(Env, ((Head), (A -> T), _), I),!.
+%elaborate de la récursion des opérations arithmétiques (+, *, /, -)
 elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
     E =.. [Head, Middle, Tail],
     index(Env, (Head,(A -> B -> T)), I),
