@@ -121,7 +121,7 @@ elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
     elaborate(Env,Middle , _, E2),
     elaborate(Env, Tail, _, Eautre),!.
 %%elaboration des opérateurs conditionels (if(e1, e2, e3))
-elaborate(Env, E, T, if(app(R1, R2), R3)):-
+elaborate(Env, E, T, if(R1, R2, R3)):-
     E=.. [if, E1, E2, E3],!,
     elaborate(Env, E1, _, R1),
     elaborate(Env, E2, T, R2),

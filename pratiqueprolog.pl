@@ -205,3 +205,14 @@ pos([X|Xr], Y, Z) :-
 index([], _, _) :- write('Le Tableau est vide').
 index([X|Xr], X, 0).
 index([X|Xr], A, N) :- index(Xr, A, G), N is G+1.
+%%Prédicat prolog qui vérifie si un élément est contenu au moins 2 fois dans une liste.
+dup(A, [A,A|_]).
+dup(A, [A,B|R]) :- dup(A, [A|R]).
+dup(A, [B|R]) :- dup(A, R).
+%% Prédicat Prolog qui vérifie si C est une sous-liste de A.
+sublist2([], _).
+sublist2([X|Xs], Y) :- member(X, Y), sublist2(Xs, Y). 
+
+sous_liste(Partie, Totale) :-
+    append(Partie, _Apres, Liste),
+    append(_Avant, Liste, Total).
