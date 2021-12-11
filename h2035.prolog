@@ -127,8 +127,8 @@ elaborate(Env, E , T, app(var(Idx), R1)):-
     elaborate(Env, E1, _, R1).
 %%elaborate pour le cas de base des opérations arithmétiques (+, *, /, -)
 elaborate(Env, E, T, app(var(I), Eretour)):- 
-    E =.. [Head,Eretour],!,
-    index(Env, ((Head), (A -> T), _), I).
+    E =.. [Head,Eretour],
+    index(Env, ((Head), (A -> T), _), I),!.
 %%elaborate de la récursion des opérations arithmétiques (+, *, /, -)
 elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
     E =.. [Head, Middle, Tail],
