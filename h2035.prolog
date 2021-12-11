@@ -239,15 +239,6 @@ eval(Env, app(app(var(Idx), A), var(Indx2)), V):-!,
     index(Env, (builtin(C)), Idx),
     builtin(C, A, builtin(X)),
     builtin(X, [], V).
-%%Evaluation pour les expressions arithmétiques
-eval(Env, app(var(Indx), A), V):-!,
-    index(Env,(builtin(S)), Indx),
-   builtin(S, A, V).
-%eval(Env, app(app(var(I), E2), Eautre), V):-!,
-%    index(Env, (builtin(S)), I),
-%    eval(Env, E2, R2),
-%    eval(Env, Eautre, Rautre),
-%    builtin((+R2), Rautre, V).
 %%Evaluation pour les opérateurs sur les listes
 eval(Env, app(var(Idx), E), V):-!,
     index(Env, (builtin(O)), Idx),
@@ -257,6 +248,16 @@ eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
     eval(Env, E2, V2),
     apply(V1, V2, V).
+%%Evaluation pour les expressions arithmétiques
+eval(Env, app(var(Indx), A), V):-!,
+    index(Env,(builtin(S)), Indx),
+   builtin(S, A, V).
+eval(Env, app(app(var(I), E2), Eautre), V):-!,
+    index(Env, (builtin(S)), I),
+    eval(Env, E2, R2),
+    eval(Env, Eautre, Rautre),
+    builtin((+R2), Rautre, V).
+
 %% ¡¡ REMPLIR ICI !!
 eval(_, E, _) :-
     debug_print(eval_unknown(E)), fail.
