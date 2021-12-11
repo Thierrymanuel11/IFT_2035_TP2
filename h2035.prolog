@@ -252,7 +252,7 @@ eval(Env, app(app(var(Idx), A), var(Indx2)), V):-!,
 eval(Env, app(var(Idx), E), V):-!,
     index(Env, (builtin(O)), Idx),
     eval(Env, E, R),
-    builtin(O, E, V).
+    builtin(O, R, V).
 eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
     eval(Env, E2, V2),
