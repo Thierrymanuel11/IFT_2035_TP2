@@ -234,6 +234,11 @@ eval(_, E, _) :-
 eval(_, N, N) :- number(N), !.
 eval(Env, var(Idx), V) :- !, nth_elem(Idx, Env, V).
 eval(Env, lambda(E), closure(Env, E)) :- !.
+%%Evaluation pour les constructeurs de liste
+eval(Env, app(app(var(Idx), A), var(Indx2)), V):-!,
+    index(Env, (builtin(C)), Idx),
+    builtin(C, A, builtin(X)),
+    builtin(X, [], V).
 %%Evaluation pour les expressions arithmétiques
 eval(Env, app(var(Indx), A), V):-!,
     index(Env,(builtin(S)), Indx),
@@ -243,11 +248,6 @@ eval(Env, app(app(var(I), E2), Eautre), V):-!,
     eval(Env, E2, R2),
     eval(Env, Eautre, Rautre),
     builtin((+R2), Rautre, V).
-%%Evaluation pour les constructeurs de liste
-eval(Env, app(app(var(Idx), A), var(Indx2)), V):-!,
-    index(Env, (builtin(C)), Idx),
-    builtin(C, A, builtin(X)),
-    builtin(X, [], V).
 %%Evaluation pour les opérateurs sur les listes
 eval(Env, app(var(Idx), E), V):-!,
     index(Env, (builtin(O)), Idx),
