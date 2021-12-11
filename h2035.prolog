@@ -110,10 +110,25 @@ elaborate(Env, E, T, app(app(var(I), E1), Eautre)):-
     index(Env, (Head, T), I),
     elaborate(Env, Tail, _, Eautre),
     elaborate(Env, Middle, _, E1),!.
+%%Elaborate pour empty
+elaborate(Env, E, bool, app(var(Idx), N)):-
+    E=.. [empty, E1],!,
+    index(Env, (empty, T), Idx),
+    elaborate(Env, E1, _, N).
+%%Elaborate pour le car
+elaborate(Env, E , T, app(var(Idx), R1)):-
+    E=.. [car, E1],!,
+    index(Env, (car, T),Idx),
+    elaborate(Env, E1, _, R1).
+%%Elaborate pour le cdr
+elaborate(Env, E , T, app(var(Idx), R1)):-
+    E=.. [cdr, E1],!,
+    index(Env, (cdr, T), Idx),
+    elaborate(Env, E1, _, R1).
 %%elaborate pour le cas de base des opérations arithmétiques (+, *, /, -)
 elaborate(Env, E, T, app(var(I), Eretour)):- 
-    E =.. [Head,Eretour],
-    index(Env, ((Head), (A -> T), _), I),!.
+    E =.. [Head,Eretour],!,
+    index(Env, ((Head), (A -> T), _), I).
 %%elaborate de la récursion des opérations arithmétiques (+, *, /, -)
 elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
     E =.. [Head, Middle, Tail],
@@ -219,13 +234,25 @@ eval(_, E, _) :-
 eval(_, N, N) :- number(N), !.
 eval(Env, var(Idx), V) :- !, nth_elem(Idx, Env, V).
 eval(Env, lambda(E), closure(Env, E)) :- !.
+%%Evaluation pour les expressions arithmétiques
 eval(Env, app(var(Indx), A), V):-!,
     index(Env,(builtin(S)), Indx),
     builtin(S, A, V).
+eval(Env, app(app(var(I), E2), Eautre), V):-!,
+    index(Env, (builtin(S)), I),
+    eval(Env, E2, R2),
+    eval(Env, Eautre, Rautre),
+    builtin((+R2), Rautre, V).
+%%Evaluation pour les constructeurs de liste
 eval(Env, app(app(var(Idx), A), var(Indx2)), V):-!,
     index(Env, (builtin(C)), Idx),
     builtin(C, A, builtin(X)),
     builtin(X, [], V).
+%%Evaluation pour les opérateurs sur les listes
+eval(Env, app(var(Idx), E), V):-!,
+    index(Env, (builtin(O)), Idx),
+    eval(Env, E, R),
+    builtin(O, E, V).
 eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
     eval(Env, E2, V2),

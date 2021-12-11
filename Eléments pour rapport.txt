@@ -21,6 +21,9 @@ Difficultés rencontrés:
     une expression arithmétique car leurs décompositions avec l'opérateur =.. renvoit un tableau avec le meme nombre d'éléments.
     Pour corriger cela, nous avons implémenter un cas spécial de décomposition. Au lieu de mettre "[Head, Middle, Tail]", on a mis "[: Middle, Tail]"
     et nous avons positionné ce fragment de code avant l'émaboration des expressions arithmétiques.
+    -Elaboration pour les opérateurs sur les listes (empty, car, cdr) : Nous avons décomposer notre Expression avec l'opérateur =.., et nous avons fait 
+    l'appel correspondant à chacun de ses opérateurs en sortie. Chacun des opérateurs sera pris dans l'environement et élaborer en utilisant les 
+    indices de De Bruijin via le prédicat "index" que l'on a implémenter plus bas dans le code.
 
 *Solutions apportées:
     -
