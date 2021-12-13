@@ -1,4 +1,3 @@
-Difficultés rencontrés:
 *Prédicat elaborate:
     - Elaboration des expressions booléenes
     - Elaboration des listes d'expressions
@@ -24,6 +23,9 @@ Difficultés rencontrés:
     -Elaboration pour les opérateurs sur les listes (empty, car, cdr) : Nous avons décomposer notre Expression avec l'opérateur =.., et nous avons fait 
     l'appel correspondant à chacun de ses opérateurs en sortie. Chacun des opérateurs sera pris dans l'environement et élaborer en utilisant les 
     indices de De Bruijin via le prédicat "index" que l'on a implémenter plus bas dans le code.
+    -Elaboration pour les lambda expression: Nois avons utiliser l'opérateur "=.." pour subdiviser la lambda expression et vérifier si la variable
+    de l'expression était bien un identifiant, avant de retourner la lambda expression élaborée. La difficulté coe pour la plupart des cas ici est de 
+    ressortir le type de l'expression.
 
-*Solutions apportées:
+Predicat eval:
     -
