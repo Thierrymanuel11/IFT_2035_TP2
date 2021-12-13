@@ -252,17 +252,8 @@ eval(Env, app(var(Idx), E), V):-!,
 %%Evaluation pour l'opérateur conditionel
 eval(Env, if(Cond, E1, E2), V):-
     eval(Env, Cond, true) -> eval(Env, E1, V); 
-   eval(Env, E2,  V).
+    eval(Env, E2,  V).
 
-% Evaluation op conditionnel
-
-%eval(Env, if(Cond, E1, E2), V):-
-%    Env1 = Env,
-%    Env2 = Env,
-%    eval(Env, Cond, true) -> eval(Env1, E1, V); 
-%eval(Env2, E2,  V).
-
-%runeval(if(empty(cons(1,nil)), 1+1, 1+5), T, N).
 eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
     eval(Env, E2, V2),
