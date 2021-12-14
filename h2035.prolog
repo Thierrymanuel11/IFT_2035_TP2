@@ -85,7 +85,6 @@ elaborate(Env, lambda(X,E), T, lambda(DE)) :-
     !, elaborate([(X,T1)|Env], E, T2, DE), T = (T1 -> T2).
 %%Elaboration des expréssions booléenes
 elaborate(Env, N, T, var(I)) :- N = true,!, index(Env, (N, T),I); N=false,!,index(Env, (N, T),I).
-%%Environement de base: [((+), (int->int->int)), ((*), (int->int->int)), ((-), (int->int->int)), ((/), (int->int->int)), (cons, list(t)), ((nil), (empty))]
 %%Elaboration de l'inverse de l'inference de type
 elaborate(Env, E, T, Eretour):-
     E =.. [?, Middle, nil],
@@ -100,11 +99,11 @@ elaborate(Env, E, T, N):-
 elaborate(Env, E, Tail, E2):-
     E =.. [:, Middle, Tail],
     elaborate(Env, Middle, _, E2),!.
-%%Elaborate pour les expressions lambda
-elaborate(Env, E, T, lambda(E1)):-
-    E=.. [lambda, Var, Exp],!,
-    identifier(Var),
-    elaborate([(Var, ta)|Env], Exp, T, E1).
+%%elaborate pour les expressions let
+elaborate(Env, let([E1] ,E2), T, let([R1], R2)):-!,
+    (E1) =.. [= , Var, Exp],
+    elaborate([(Var, T1)|Env], Exp,_, R1),
+    elaborate([(Var, T1)|Env], E2, T, R2).
 %%elaborate pour le cas de base de l'operateur de constructeur de liste.
 elaborate(Env, nil, T, var(I)):-
     index(Env, (nil, T), I),!.
@@ -250,9 +249,9 @@ eval(Env, app(var(Idx), E), V):-!,
     eval(Env, E, R),
     builtin(O, R, V).
 %%Evaluation pour l'opérateur conditionel
-eval(Env, if(Cond, E1, E2), V):-
-    eval(Env, Cond, true) -> eval(Env, E1, V); 
-    eval(Env, E2,  V).
+eval(Env, if(Cond, E1, E2), V):-!,
+    eval(Env, Cond, true) -> eval(Env, E1, V);
+    eval(Env, E2, V).
 
 eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
