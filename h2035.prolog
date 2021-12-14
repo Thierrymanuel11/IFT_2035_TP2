@@ -1,5 +1,9 @@
 %% -*- mode: prolog; coding: utf-8 -*-
 
+%Auteurs : -Tchoumkeu Djeumen Thierry Manuel 20170651
+%          - Medjahed Mehdi 20142385
+
+
 %% GNU Prolog défini `new_atom`, mais SWI Prolog l'appelle `gensym`.
 genatom(X, A) :-
     %% Ugly hack, âmes sensibles s'abstenir.
@@ -76,16 +80,17 @@ elaborate(_, E, _, _) :-
     var(E), !,
     debug_print(elaborate_nonclos(E)), fail.
 elaborate(_, N, T, N) :- number(N), !, T = int.
-%% ¡¡ REMPLIR ICI !!
-%%generalize([], [(test, (int -> list(int) -> list(int)))], T).
+
 elaborate(Env, X, _, var(I)) :-
     identifier(X),
     index(Env, (X, _), I),!. 
 elaborate(Env, lambda(X,E), T, lambda(DE)) :-
     !, elaborate([(X,T1)|Env], E, T2, DE), T = (T1 -> T2).
-%%Elaboration des expréssions booléenes
+%% ¡¡ REMPLIR ICI !!
+
+%%Elaborate des expréssions booléenes
 elaborate(Env, N, T, var(I)) :- N = true,!, index(Env, (N, T),I); N=false,!,index(Env, (N, T),I).
-%%Elaboration de l'inverse de l'inference de type
+%%Elaborate de l'inverse de l'inference de type
 elaborate(Env, E, T, Eretour):-
     E =.. [?, Middle, nil],
     elaborate(Env, cons(Middle, nil), T, Eretour),!.
@@ -95,21 +100,21 @@ elaborate(Env, E, T, N):-
     elaborate(Env, Middle, _, Elab_Middle),
     elaborate(Env, A, _, Elab_Tail),
     elaborate(Env, cons(Elab_Middle, cons(Elab_Tail, nil)), T1, N),!.
-%%Elaboration de l'inférence de types
+%%Elaborate de l'inférence de types
 elaborate(Env, E, Tail, E2):-
     E =.. [:, Middle, Tail],
     elaborate(Env, Middle, _, E2),!.
 %%elaborate pour les expressions let
-elaborate(Env, let([E1] ,E2), T, let([R1], R2)):-!,
+elaborate(Env, let([E1] ,E2), GT, let([R1], R2)):-!,
     (E1) =.. [= , Var, Exp],
     elaborate([(Var, T1)|Env], Exp,_, R1),
-    elaborate([(Var, T1)|Env], E2, T, R2).
-
+    elaborate([(Var, T1)|Env], E2, T, R2),
+    generalize(Fenv, [(_,T)], [(_,GT)]).
 
 %%elaborate pour le cas de base de l'operateur de constructeur de liste.
 elaborate(Env, nil, T, var(I)):-
     index(Env, (nil, T), I),!.
-%%Elaboration de la récursion de l'opérateur de constructeur de liste.
+%%Elaborate de la récursion de l'opérateur de constructeur de liste.
 elaborate(Env, E, T, app(app(var(I), E1), Eautre)):-
     E=.. [Head, Middle, Tail],
     Head = cons,
@@ -131,27 +136,26 @@ elaborate(Env, E , T, app(var(Idx), R1)):-
     E=.. [cdr, E1],!,
     index(Env, (cdr, T), Idx),
     elaborate(Env, E1, _, R1).
-%%elaborate pour le cas de base des opérations arithmétiques (+, *, /, -)
+%%elaborate pour le cas de base des opérations arithmétiques 
 elaborate(Env, E, T, app(var(I), Eretour)):- 
     E =.. [Head,Eretour],
     index(Env, ((Head), (A -> T), _), I),!.
-%%elaborate de la récursion des opérations arithmétiques (+, *, /, -)
+%%elaborate de la récursion des opérations arithmétiques 
 elaborate(Env, E, T, app(app(var(I), E2), Eautre)):-
     E =.. [Head, Middle, Tail],
     index(Env, (Head,(A -> B -> T)), I),
     elaborate(Env,Middle , _, E2),
     elaborate(Env, Tail, _, Eautre),!.
-%%elaboration des opérateurs conditionels (if(e1, e2, e3))
+%%elaborate des opérateurs conditionels (if(e1, e2, e3))
 elaborate(Env, E, T, if(R1, R2, R3)):-
     E=.. [if, E1, E2, E3],!,
     elaborate(Env, E1, _, R1),
     elaborate(Env, E2, T, R2),
     elaborate(Env, E3, _, R3).
 
-%L'opérateur ! (cut) est utile ici pour contrecarer les effets du backTracking si jamais l'expression que l'on a est déjà valide.
-% On ne va donc pas aller tester les conditions plus bas si c'est la cas.
+
 elaborate(_, E, _, _) :-
-    debug_print(elab_unknown(E)), fail.%%Poser la question par rapport à cette ligne.
+    debug_print(elab_unknown(E)), fail.
 
 %% Ci-dessous, quelques prédicats qui vous seront utiles:
 %% - instantiate: correspond à la règle "σ ⊂ τ" de la donnée.
@@ -240,6 +244,9 @@ eval(_, E, _) :-
 eval(_, N, N) :- number(N), !.
 eval(Env, var(Idx), V) :- !, nth_elem(Idx, Env, V).
 eval(Env, lambda(E), closure(Env, E)) :- !.
+
+%% ¡¡ REMPLIR ICI !!
+
 %%Evaluation pour les constructeurs de liste
 eval(Env, app(app(var(Idx), A), var(Indx2)), V):-!,
     index(Env, (builtin(C)), Idx),
@@ -259,6 +266,7 @@ eval(Env, app(E1, E2), V) :-
     !, eval(Env, E1, V1),
     eval(Env, E2, V2),
     apply(V1, V2, V).
+
 %%Evaluation pour les expressions arithmétiques
 eval(Env, app(var(Indx), A), V):-!,
     index(Env,(builtin(S)), Indx),
@@ -273,7 +281,7 @@ eval(Env, let([E1], E2), V):-
     eval(Env, E1, Exp_Builtin),
     eval([Exp_Builtin|Env], E2, V).
 
-%% ¡¡ REMPLIR ICI !!
+
 eval(_, E, _) :-
     debug_print(eval_unknown(E)), fail.
 
@@ -366,7 +374,3 @@ index([X|Xr], X, 0).
 index([X|Xr], A, N) :- index(Xr, A, G), N is G+1.
 %%index([(X, Y)], (X, Y), 0).
 %%index([(X, Y)|Resttab], A, N):- index(Resttab, A, G), N is G+1.
-
-%%Prédicat Prolog qui retourne le premier élément d'une liste.
-head([], _).
-head([X|Xr], X).
